@@ -56,7 +56,7 @@ func (r *TaskRepository) Create(task *model.Task) (*model.Task, error) {
 	return task, nil
 }
 
-func (r *TaskRepository) GetAll(userID int, status string) ([]model.Task, error) {
+func (r *TaskRepository) GetAll(userID int, status model.TaskStatus) ([]model.Task, error) {
 	var query string
 	var args []interface{}
 

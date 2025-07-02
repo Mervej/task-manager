@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"task-manager/internal/model"
 	"task-manager/internal/repository"
+	"task-manager/pkg/utils"
 )
 
 type TaskService struct {
@@ -34,17 +35,19 @@ func (s *TaskService) CreateTask(task *model.Task, userIDStr string) (*model.Tas
 	return s.repo.Create(task)
 }
 
-func (s *TaskService) GetTasks(userIDStr string, status ...string) ([]model.Task, error) {
+func (s *TaskService) GetTasks(userIDStr string, status string) ([]model.Task, error) {
 	userID, err := strconv.Atoi(userIDStr)
 	if err != nil {
 		return nil, errors.New("invalid user ID")
 	}
 
 	// check if any status filter is provided
-	var statusFilter string
-	if len(status) > 0 {
-		statusFilter = status[0]
+	var statusFilter model.TaskStatus
+	if !utils.IsValidTaskStatus(status) {
+		return nil, errors.New("invalid task status")
 	}
+	statusFilter = model.TaskStatus(status)
+
 	return s.repo.GetAll(userID, statusFilter)
 }
 
@@ -87,9 +90,7 @@ func (s *TaskService) UpdateTask(id int, task *model.Task, userIDStr string) (*m
 
 	// only update status if provided and valid
 	if task.Status != "" {
-		if task.Status != string(model.Todo) &&
-			task.Status != string(model.InProgress) &&
-			task.Status != string(model.Done) {
+		if utils.IsValidTaskStatus(string(task.Status)) {
 			return nil, errors.New("invalid task status")
 		}
 		existingTask.Status = task.Status

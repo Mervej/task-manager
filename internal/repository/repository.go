@@ -9,7 +9,7 @@ type ITaskRepository interface {
 	Create(task *model.Task) (*model.Task, error)
 
 	// GetAll retrieves all tasks for a specific user, optionally filtered by status
-	GetAll(userID int, status string) ([]model.Task, error)
+	GetAll(userID int, status model.TaskStatus) ([]model.Task, error)
 
 	// GetByID retrieves a task by its ID and verifies it belongs to the user
 	GetByID(id int, userID int) (*model.Task, error)
